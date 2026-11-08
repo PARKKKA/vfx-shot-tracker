@@ -7,6 +7,7 @@ VFX Shot Tracker - เวอร์ชัน 1 (เทอร์มินัล)
 
 import json
 import os
+from datetime import datetime
 
 DATA_FILE = "shots.json"  # ไฟล์ที่ใช้เก็บข้อมูล
 STATUSES = ["Todo", "In Progress", "Review", "Done"]
@@ -37,6 +38,14 @@ def next_id(shots):
     return max(s["id"] for s in shots) + 1
 
 
+def is_valid_date(text):
+    """ตรวจว่าข้อความเป็นวันที่รูปแบบ YYYY-MM-DD ที่มีอยู่จริงไหม"""
+    try:
+        datetime.strptime(text, "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False
+    
 def add_shot(shots):
     name = input("ชื่อ shot (เช่น SH010): ").strip()
     if not name:
@@ -44,7 +53,12 @@ def add_shot(shots):
         return
     task = input("ประเภทงาน (เช่น Roto / Matchmove / Paint): ").strip()
     assignee = input("ผู้รับผิดชอบ: ").strip()
-    deadline = input("deadline (YYYY-MM-DD): ").strip()
+
+    while True:
+        deadline = input("deadline (YYYY-MM-DD): ").strip()
+        if is_valid_date(deadline):
+            break
+        print("วันที่ไม่ถูกต้อง ลองใหม่")
 
     shot = {
         "id": next_id(shots),
@@ -155,4 +169,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
